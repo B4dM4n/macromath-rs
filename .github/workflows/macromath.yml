@@ -1,0 +1,103 @@
+name: macromath
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+env:
+  CARGO_INCREMENTAL: 0
+  RUSTFLAGS: "-Dwarnings"
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+      - name: Run 'cargo update'
+        uses: actions-rs/cargo@v1
+        with:
+          command: update
+      - name: Upload Cargo.lock
+        uses: actions/upload-artifact@v2
+        with:
+          name: Cargo.lock
+          path: Cargo.lock
+  build:
+    runs-on: ubuntu-latest
+    needs: update
+    strategy:
+      matrix:
+        rust:
+          - 1.56.0 # MSRV
+          - stable
+        target:
+          - thumbv7em-none-eabi
+          - wasm32-unknown-unknown
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: ${{ matrix.rust }}
+          target: ${{ matrix.target }}
+          override: true
+      - name: Download Cargo.toml
+        uses: actions/download-artifact@v2
+        with:
+          name: Cargo.lock
+      - name: Run 'cargo build'
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --locked --no-default-features --release --target ${{ matrix.target }}
+  test:
+    runs-on: ubuntu-latest
+    needs: update
+    strategy:
+      matrix:
+        rust:
+          - 1.56.0 # MSRV
+          - stable
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: ${{ matrix.rust }}
+          components: rustfmt, clippy
+      - name: Download Cargo.toml
+        uses: actions/download-artifact@v2
+        with:
+          name: Cargo.lock
+      - name: Run 'cargo check'
+        uses: actions-rs/cargo@v1
+        with:
+          command: check
+          args: --locked
+      - name: Run 'cargo fmt'
+        uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          args: --all -- --check
+      - name: Run 'cargo clippy'
+        uses: actions-rs/cargo@v1
+        with:
+          command: clippy
+          args: --locked
+      - name: Run 'cargo test'
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
+          args: --locked
+      - name: Run 'cargo test --all-features'
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
+          args: --locked --all-features
