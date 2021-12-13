@@ -56,5 +56,5 @@ dual licensed as above, without any additional terms or conditions.
 [docs-link]: https://docs.rs/macromath/
 [license-image]: https://img.shields.io/badge/license-Apache2.0/MIT-blue.svg
 [rustc-image]: https://img.shields.io/badge/rustc-1.56+-blue.svg
-[build-image]: https://github.com/B4dM4n/macromath-rs/workflows/macromath/badge.svg?branch=master&event=push
+[build-image]: https://github.com/B4dM4n/macromath-rs/workflows/macromath/badge.svg?branch=main&event=push
 [build-link]: https://github.com/B4dM4n/macromath-rs/actions?query=workflow%3Amacromath

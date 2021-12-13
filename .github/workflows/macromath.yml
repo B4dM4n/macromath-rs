@@ -2,9 +2,10 @@ name: macromath
 
 on:
   pull_request:
+  release:
   push:
     branches:
-      - master
+      - main
 
 env:
   CARGO_INCREMENTAL: 0
