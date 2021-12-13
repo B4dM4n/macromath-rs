@@ -8,7 +8,7 @@ license = "MIT OR Apache-2.0"
 name = "macromath"
 readme = "README.md"
 repository = "https://github.com/B4dM4n/macromath-rs"
-version = "0.1.0-alpha.0"
+version = "0.1.0"
 
 [lib]
 proc-macro = true
